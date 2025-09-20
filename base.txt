@@ -1,0 +1,143 @@
+App Outline: Video Audio Extractor
+Overview
+This application consists of a FastAPI server and a browser extension that work together to extract audio from videos. I'll address your storage concern and provide a comprehensive outline for both components.
+
+FastAPI Server
+Core Components
+Video Upload Endpoint: Receive videos from the extension
+Audio Extraction Service: Process videos to extract audio
+Storage/Transmission System: Handle extracted audio files
+Job Management: Track extraction progress (for async processing)
+API Endpoints
+
+Line Wrapping
+
+Collapse
+Copy
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+POST /api/v1/extract-audio
+- Accepts video file
+- Returns extracted audio or job ID
+
+GET /api/v1/status/{job_id}
+- Check extraction status
+- Returns progress percentage
+
+GET /api/v1/download/{job_id}
+- Download extracted audio
+- Returns audio file with proper headers
+Project Structure
+
+Line Wrapping
+
+Collapse
+Copy
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+fastapi-server/
+├── app/
+│   ├── main.py              # FastAPI app
+│   ├── api/
+│   │   ├── endpoints.py     # API routes
+│   │   └── models.py        # Pydantic models
+│   ├── core/
+│   │   ├── config.py        # Settings
+│   │   └── extractor.py     # Audio extraction logic
+│   └── utils/
+│       └── file_handler.py  # File operations
+├── requirements.txt
+└── README.md
+Browser Extension
+Core Components
+Content Script: Detect videos on web pages
+Background Script: Handle API communication
+Popup UI: User interface for extraction
+Context Menu: Right-click option for videos
+Project Structure
+
+Line Wrapping
+
+Collapse
+Copy
+1
+2
+3
+4
+5
+6
+7
+8
+9
+browser-extension/
+├── manifest.json            # Extension metadata
+├── background.js            # Background processes
+├── content.js               # Page interaction
+├── popup/
+│   ├── popup.html           # UI
+│   ├── popup.js             # UI logic
+│   └── popup.css            # Styling
+└── icons/
+    └── icon128.png         # Extension icon
+Storage Approach Recommendation
+Regarding your question about text file hosting vs. per-video submission, I recommend a hybrid approach:
+
+For Small Videos (< 50MB)
+Direct processing: Extract and return audio immediately
+No server storage: Audio is streamed directly to the user
+Benefits: Simpler, no storage costs, better privacy
+For Large Videos (≥ 50MB)
+Asynchronous processing:
+Store video temporarily
+Process in background
+Notify user when complete
+Provide download link
+Temporary storage: Auto-delete after 24 hours
+Benefits: Better UX for large files, prevents timeouts
+Implementation Workflow
+User visits a page with a video
+Extension detects video and adds context menu option
+User right-clicks and selects "Extract Audio"
+Extension captures video and sends to server
+Server determines size and processing method
+Server extracts audio using ffmpeg or moviepy
+Server either:
+Returns audio directly (small files)
+Returns job ID and processes asynchronously (large files)
+Extension receives audio or polls for completion
+User downloads extracted audio
+Tech Stack
+Server
+FastAPI
+Python
+ffmpeg (for audio extraction)
+Redis (for job queue if needed)
+SQLAlchemy (if implementing persistent storage)
+Extension
+HTML/CSS/JavaScript
+Browser APIs (Chrome/Firefox)
+Fetch API for server communication
+Would you like me to elaborate on any specific part of this outline?
+
+
+

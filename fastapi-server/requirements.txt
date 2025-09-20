@@ -1,0 +1,8 @@
+FastAPI
+yt-dlp
+uvicorn
+pydantic
+aiofiles
+python-multipart
+redis
+sqlalchemy
