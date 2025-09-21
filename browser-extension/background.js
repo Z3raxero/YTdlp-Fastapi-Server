@@ -12,11 +12,18 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Extract Audio from Video",
     contexts: ["video"]
   });
+  chrome.contextMenus.create({
+    id: "submit-audio",
+    title: "Submit Audio",
+    contexts: ["video"]
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "extract-audio") {
     chrome.tabs.sendMessage(tab.id, { action: "extract-audio" });
+  } else if (info.menuItemId === "submit-audio") {
+    // Your fetch or message code here
   }
 });
 
