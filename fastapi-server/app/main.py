@@ -1,3 +1,4 @@
+#This is the bulk lifter for the FastAPI server application.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
