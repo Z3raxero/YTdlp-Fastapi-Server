@@ -6,3 +6,5 @@ aiofiles
 python-multipart
 redis
 sqlalchemy
+ffprobe
+ffmpeg
