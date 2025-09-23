@@ -25,4 +25,4 @@ pip install --upgrade pip
 pip install --upgrade -r requirements.txt
 
 echo "=== [4/4] Starting FastAPI server... ==="
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
