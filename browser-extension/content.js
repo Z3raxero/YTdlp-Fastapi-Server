@@ -1,4 +1,8 @@
+console.log("Content script loaded");
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  console.log("Content script received message:", msg);
+  
   if (msg.action === "extract-audio") {
     const pageUrl = window.location.href;
     
@@ -9,6 +13,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       console.log("Clean URL:", cleanUrl);
       
       if (cleanUrl) {
+        // Send message to background script
         chrome.runtime.sendMessage({
           action: "sendVideoToServer",
           videoUrl: cleanUrl
@@ -19,10 +24,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             return;
           }
           
+          console.log("Background script response:", response);
+          
           if (response.success) {
             alert("Audio extraction started. You'll be notified when it's ready for download.");
           } else {
-            alert("Failed to extract audio: " + response.error);
+            alert("Failed to start audio extraction: " + response.error);
           }
         });
       } else {
@@ -45,10 +52,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             return;
           }
           
+          console.log("Background script response:", response);
+          
           if (response.success) {
             alert("Audio extraction started. You'll be notified when it's ready for download.");
           } else {
-            alert("Failed to extract audio: " + response.error);
+            alert("Failed to start audio extraction: " + response.error);
           }
         });
       } else {
@@ -56,7 +65,17 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         alert("No supported video found on this page.");
       }
     }
+  } 
+  else if (msg.action === "extractionCompleted") {
+    console.log("Extraction completed for job:", msg.jobId);
+    alert("Audio extraction completed! The download should start automatically.");
+  } 
+  else if (msg.action === "extractionFailed") {
+    console.error("Extraction failed:", msg.error);
+    alert("Audio extraction failed: " + msg.error);
   }
+  
+  return true; // Keep message channel open
 });
 
 // Function to clean YouTube URL
