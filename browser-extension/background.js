@@ -64,9 +64,40 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     return true; // Keep message channel open for async response
   }
+  else if (message.action === "showNotification") {
+    // Show notification based on type
+    showNotification(message.type, message.message);
+    return true;
+  }
   
   return false;
 });
+
+// Function to show notifications (without icons)
+function showNotification(type, message) {
+  const titles = {
+    info: "YouTube Audio Extractor",
+    success: "Extraction Complete!",
+    error: "Extraction Failed"
+  };
+  
+  chrome.notifications.create({
+    type: "basic",
+    title: titles[type],
+    message: message
+  }, (notificationId) => {
+    console.log(`Notification created with ID: ${notificationId}`);
+    
+    // Auto-close info notifications after 3 seconds
+    if (type === "info") {
+      setTimeout(() => {
+        chrome.notifications.clear(notificationId, (wasCleared) => {
+          console.log(`Notification ${notificationId} cleared: ${wasCleared}`);
+        });
+      }, 3000);
+    }
+  });
+}
 
 async function processExtraction(videoUrl, tabId) {
   try {
